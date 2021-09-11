@@ -9,8 +9,6 @@ const app = express();
 app.use(express.json());
 app.use(cors());
 
-app.use("/new", sample);
-
 mongoose
     .connect("mongodb+srv://annu_2020:annu_2020@cluster0.duywm.mongodb.net/cun?retryWrites=true&w=majority", {
         useNewUrlParser: true,
@@ -20,6 +18,8 @@ mongoose
     })
     .then(() => console.log("Connected to database"))
     .catch((err) => console.log(err));
+
+app.use("/new", sample);
 
 const PORT = process.env.PORT || 5000;
 
