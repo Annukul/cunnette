@@ -12,7 +12,7 @@ app.use(cors());
 app.use("/new", sample);
 
 mongoose
-    .connect("mongodb://localhost:27017/cun", {
+    .connect("mongodb+srv://annu_2020:annu_2020@cluster0.duywm.mongodb.net/cun?retryWrites=true&w=majority", {
         useNewUrlParser: true,
         useUnifiedTopology: true,
         // useCreateIndex: true,
