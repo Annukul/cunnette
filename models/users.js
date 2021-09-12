@@ -1,4 +1,4 @@
-const mongoose = require("mongoose");
+import mongoose from 'mongoose';
 
 const userSchema = new mongoose.Schema({
   userName: {
@@ -17,19 +17,20 @@ const userSchema = new mongoose.Schema({
     type: String,
   },
   userRole: {
-  	type: String,
+    type: String,
   },
-  emailVerifyStatus:{
-  	type: Boolean,
+  emailVerifyStatus: {
+    type: Boolean,
   },
-  verificationCode:{
-  	type: String,
+  verificationCode: {
+    type: String,
   },
-  accountStatus:{
-  	type: Boolean,
+  accountStatus: {
+    type: Boolean,
   }
 
 });
 
 
-module.exports = mongoose.model("Users", userSchema);
+const Users = mongoose.model("users", userSchema);
+export default Users;

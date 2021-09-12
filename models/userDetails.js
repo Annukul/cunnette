@@ -1,24 +1,24 @@
-const mongoose = require("mongoose");
+import mongoose from 'mongoose';
 
 const userSchema = new mongoose.Schema({
   _userId: {
     type: String,
-  }
+  },
   collegeDetail: {
-    collegeName:{
+    collegeName: {
       type: String
     },
-    collegeBranch:{
+    collegeBranch: {
       type: String
     },
-    collegeRollNo:{
+    collegeRollNo: {
       type: String
     },
-    courseDuration:{
-      from:{
+    courseDuration: {
+      from: {
         type: Date
       },
-      to:{
+      to: {
         type: Date
       }
     }
@@ -30,33 +30,87 @@ const userSchema = new mongoose.Schema({
     type: Array,
   },
   dob: {
-    type: Date,
+    type: String,
   },
   contacts: {
-    professionalEmailId:{
+    professionalEmailId: {
       type: String,
     },
-    phoneNumber:{
+    phoneNumber: {
       type: String,
     }
   },
   socialLinks: {
-  	twitter:{
+    twitter: {
       type: String,
     },
-    linkedin:{
+    linkedin: {
       type: String,
     }
   },
-  address:{
-  	currentState:{
+  address: {
+    currentState: {
       type: String,
     },
-    currentCiy:{
+    currentCity: {
       type: String,
     }
   },
-});
+  internships: [
+    {
+      internshipName: {
+        type: String
+      },
+      internshipDetail: {
+        type: String
+      },
+      internshipDuration: {
+        from: {
+          type: String
+        },
+        to: {
+          type: String
+        }
+      },
+    }
+  ],
+  jobs: [
+    {
+      jobName: {
+        type: String
+      },
+      jobDetail: {
+        type: String
+      },
+      jobDuration: {
+        from: {
+          type: String
+        },
+        to: {
+          type: String
+        }
+      },
+    }
+  ],
+  certificates: [
+    {
+      certificateName: {
+        type: String,
+      },
+      certificateLink: {
+        type: String,
+      }
+    }
+  ],
+  achievements: [
+    {
+      achievement: {
+        type: String
+      }
+    }
+  ]
+}, { timestamps: true });
 
 
-module.exports = mongoose.model("userDetails", userSchema);
+const Details = mongoose.model("userDetails", userSchema);
+export default Details;
