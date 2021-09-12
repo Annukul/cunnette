@@ -20,7 +20,8 @@ export const signup = async (req, res) => {
     return res.status(401).json({ message: "Opps, write all the details" });
   }
 
-  const emailDomain = "test";
+  const emailDomain = emailId.split("@")[1];
+
   try {
     const user = await User.create({
       userName,
