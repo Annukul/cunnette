@@ -11,7 +11,7 @@ app.use(express.json());
 app.use(cors());
 
 mongoose
-    .connect("mongodb://localhost:27017/cun", {
+    .connect("mongodb+srv://bucky:bucky_2021@cluster0.iy7ng.mongodb.net/cunnette?retryWrites=true&w=majority", {
         useNewUrlParser: true,
         useUnifiedTopology: true,
     })
