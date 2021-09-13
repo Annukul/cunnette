@@ -21,7 +21,8 @@ export const forgetPasswordEmail = (name, email, link) => {
       subject: "Cunnette Reset Password",
       html: `<h1>Cunnette Reset Password</h1>
           <h2>Hello ${name}</h2>
-          <p>Click no this link to reset your Password.</p>
+          <p>Click the following link to reset your Password.</p>
+          <h3>Delete this email if you haven't requested for password reset.</h3>
           <a href=${link}> Click here</a>
           </div>`,
     })
