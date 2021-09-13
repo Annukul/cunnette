@@ -2,39 +2,42 @@ import mongoose from "mongoose";
 import bcrypt from "bcrypt";
 import jwt from "jsonwebtoken";
 
-const userSchema = new mongoose.Schema({
-  userName: {
-    type: String,
+const userSchema = new mongoose.Schema(
+  {
+    userName: {
+      type: String,
+    },
+    fullName: {
+      type: String,
+    },
+    emailId: {
+      type: String,
+    },
+    password: {
+      type: String,
+    },
+    emailDomain: {
+      type: String,
+    },
+    userRole: {
+      type: String,
+      default: "user",
+    },
+    emailVerifyStatus: {
+      type: Boolean,
+      default: false,
+    },
+    verificationCode: {
+      type: String,
+      default: null,
+    },
+    accountStatus: {
+      type: Boolean,
+      default: false,
+    },
   },
-  fullName: {
-    type: String,
-  },
-  emailId: {
-    type: String,
-  },
-  password: {
-    type: String,
-  },
-  emailDomain: {
-    type: String,
-  },
-  userRole: {
-    type: String,
-    default: "user",
-  },
-  emailVerifyStatus: {
-    type: Boolean,
-    default: false,
-  },
-  verificationCode: {
-    type: String,
-    default: null,
-  },
-  accountStatus: {
-    type: Boolean,
-    default: false,
-  },
-});
+  { timestamps: true }
+);
 
 // Encrypting password before saving the user
 userSchema.pre("save", async function (next) {

@@ -21,8 +21,9 @@ export const sendConfirmationEmail = (name, email, confirmationCode) => {
       subject: "Please confirm your account",
       html: `<h1>Email Confirmation</h1>
           <h2>Hello ${name}</h2>
-          <p>Thank you for Regestring. Please confirm your email by clicking on the following link</p>
-          <a href=http://localhost:5000/auth/confirm/${confirmationCode}> Click here</a>
+          <p>Thank you for Regestering. Please confirm your email by clicking on the following link.</p>
+          <h3>Delete this email if you haven't requested for verification.</h3>
+          <a href=${process.env.BASE_URL}/auth/confirm/${confirmationCode}> Click here</a>
           </div>`,
     })
     .catch((err) => console.log(err));
