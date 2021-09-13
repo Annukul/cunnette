@@ -1,8 +1,10 @@
 import User from "../models/userModel.js";
+import forgetPasswordToken from "../models/forgetPasswordTokenModel.js";
 import sendToken from "../utils/jwtToken.js";
 import jwt from "jsonwebtoken";
+import crypto from "crypto";
 import { sendConfirmationEmail } from "../config/nodemailer.config.js";
-
+import { forgetPasswordEmail } from "../utils/forgetPasswordEmail.js";
 // Register a user => /auth/signup
 export const signup = async (req, res) => {
   const { userName, fullName, emailId, password } = req.body;
@@ -95,4 +97,61 @@ export const verifyUser = (req, res) => {
       });
     })
     .catch((e) => console.log("error", e));
+};
+
+// Password Reset Request => /auth/password-reset-request
+export const passwordResetRequest = async (req, res) => {
+  try {
+    const { emailId } = req.body;
+    if (!emailId) {
+      res
+        .status(400)
+        .send({ message: "Please write your registered Email Id" });
+    }
+
+    const user = await User.findOne({ emailId: emailId });
+    if (!user) {
+      res.status(400).send({ message: "User with given email doesn't exist" });
+    }
+
+    let token = await forgetPasswordToken.findOne({ userId: user._id });
+    if (!token) {
+      token = await new forgetPasswordToken({
+        userId: user._id,
+        token: crypto.randomBytes(32).toString("hex"),
+      }).save();
+
+      const link = `http://localhost:5000/auth/password-reset/${user._id}/${token.token}`;
+      await forgetPasswordEmail(user.fullName, user.emailId, link);
+      console.log(user.emailId);
+
+      res
+        .status(200)
+        .send({ message: "Password reset link sent to your email account" });
+    }
+  } catch (error) {
+    res.status(400).send({ message: "Something went wrong, Please try again" });
+    console.log("Password Reset Request" + error);
+  }
+};
+// Password Reset => /password-reset/:userId/:token
+export const passwordReset = async (req, res) => {
+  try {
+    const user = await User.findById(req.params.userId);
+    if (!user) return res.status(400).send("invalid link or expired");
+
+    const token = await forgetPasswordToken.findOne({
+      userId: user._id,
+      token: req.params.token,
+    });
+    if (!token) return res.status(400).send("Invalid link or expired");
+
+    user.password = req.body.password;
+    await user.save();
+    await token.delete();
+    res.status(200).send({ message: "Password reset sucessfully" });
+  } catch (error) {
+    res.status(400).send({ message: "Something went wrong, Please try again" });
+    console.log("Password Reset" + error);
+  }
 };
