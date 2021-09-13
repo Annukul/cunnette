@@ -1,5 +1,7 @@
 import User from "../models/userModel.js";
 import sendToken from "../utils/jwtToken.js";
+import jwt from "jsonwebtoken";
+import { sendConfirmationEmail } from "../config/nodemailer.config.js";
 
 // Register a user => /auth/signup
 export const signup = async (req, res) => {
@@ -21,6 +23,7 @@ export const signup = async (req, res) => {
   }
 
   const emailDomain = emailId.split("@")[1];
+  const verificationCode = jwt.sign({ emailId }, process.env.JWT_SECRET);
 
   try {
     const user = await User.create({
@@ -29,7 +32,9 @@ export const signup = async (req, res) => {
       emailId,
       password,
       emailDomain,
+      verificationCode,
     });
+    sendConfirmationEmail(fullName, emailId, verificationCode);
     sendToken(user, 200, res);
   } catch (error) {
     res.status(500).json({ message: error.message });
@@ -66,4 +71,28 @@ export const login = async (req, res) => {
 export const logout = (req, res) => {
   res.cookie("token", null, { expires: new Date(Date.now()), httpOnly: true });
   res.status(200).json({ success: true, message: "Logged Out" });
+};
+
+// Verify user => /auth/confirm/:verificationCode
+export const verifyUser = (req, res) => {
+  User.findOne({
+    verificationCode: req.params.verificationCode,
+  })
+    .then((user) => {
+      if (!user) {
+        return res.status(404).send({ message: "User Not found." });
+      }
+
+      user.emailVerifyStatus = true;
+      user.accountStatus = true;
+      user.save((err) => {
+        if (err) {
+          res.status(500).send({ message: err });
+          return;
+        } else {
+          res.status(200).send({ message: "Your Account is Verified" });
+        }
+      });
+    })
+    .catch((e) => console.log("error", e));
 };
