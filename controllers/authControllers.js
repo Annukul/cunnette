@@ -186,6 +186,8 @@ export const passwordReset = async (req, res) => {
       return res.status(400).json({ message: "Opps, write all the details" });
     }
 
+    // res.redirect("http://localhost:5000/reset");
+
     user.password = req.body.password;
     await user.save();
     await token.delete();
