@@ -10,7 +10,7 @@ import authRoutes from "./routes/authRoutes.js";
 dotenv.config();
 const app = express();
 app.use(express.json());
-app.use(cors());
+app.use(cors({ origin: true }));
 
 // DATABASE
 mongoose
