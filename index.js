@@ -6,6 +6,8 @@ import dotenv from "dotenv";
 import userDARoutes from "./routes/userDetailsRoutes.js";
 import postRoutes from "./routes/postRoutes.js";
 import authRoutes from "./routes/authRoutes.js";
+import imageRoutes from './routes/imageRoutes.js';
+import commentRoutes from "./routes/commentRoutes.js";
 
 dotenv.config();
 const app = express();
@@ -33,6 +35,8 @@ app.get("/", (req, res) => {
 app.use("/auth", authRoutes);
 app.use("/user", userDARoutes);
 app.use("/post", postRoutes);
+app.use("/upload", imageRoutes);
+app.use("/comment", commentRoutes);
 
 // PORT
 const PORT = process.env.PORT || 5000;

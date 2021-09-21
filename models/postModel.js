@@ -1,7 +1,10 @@
 import mongoose from 'mongoose';
 
 const postSchema = new mongoose.Schema({
-    _userId: {
+    user_id: {
+        type: String
+    },
+    image_id: {
         type: String
     },
     title: {
@@ -19,7 +22,7 @@ const postSchema = new mongoose.Schema({
     description: {
         type: String
     },
-    image: {
+    imageUrl: {
         type: String
     },
     vote: {
