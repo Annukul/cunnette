@@ -3,7 +3,7 @@ import cors from "cors";
 import mongoose from "mongoose";
 import dotenv from "dotenv";
 
-import userDARoutes from "./routes/userDetailsRoutes.js";
+import userDetailsRoutes from "./routes/userDetailsRoutes.js";
 import postRoutes from "./routes/postRoutes.js";
 import authRoutes from "./routes/authRoutes.js";
 import imageRoutes from './routes/imageRoutes.js';
@@ -33,7 +33,7 @@ app.get("/", (req, res) => {
 });
 
 app.use("/auth", authRoutes);
-app.use("/user", userDARoutes);
+app.use("/user", userDetailsRoutes);
 app.use("/post", postRoutes);
 app.use("/upload", imageRoutes);
 app.use("/comment", commentRoutes);
