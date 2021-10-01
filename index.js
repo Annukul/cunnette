@@ -5,6 +5,7 @@ import dotenv from "dotenv";
 import multer from "multer";
 import fs from 'fs';
 import cloudinary from "cloudinary";
+import cookieParser from "cookie-parser";
 
 import userDetailsRoutes from "./routes/userDetailsRoutes.js";
 import postRoutes from "./routes/postRoutes.js";
@@ -17,6 +18,7 @@ dotenv.config();
 const app = express();
 app.use(express.json());
 app.use(cors({ origin: true }));
+app.use(cookieParser());
 
 // DATABASE
 mongoose
