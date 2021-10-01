@@ -14,7 +14,9 @@ import {
 import isAuthenticatedUser from "../middlewares/auth.js";
 
 const router = express.Router();
-
+router.post("/addUserDetails", addUserDetails);
+router.get("/getUserDetails/:id", getUserDetail);
+router.put("/updateUserDetail/:id", updateUserDetail);
 router.post("/addUserDetails", isAuthenticatedUser, addUserDetails);
 router.get("/getUserDetail/:id", isAuthenticatedUser, getUserDetail);
 router.put("/updateUserDetail/:id", isAuthenticatedUser, updateUserDetail);

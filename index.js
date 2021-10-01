@@ -2,11 +2,17 @@ import express from "express";
 import cors from "cors";
 import mongoose from "mongoose";
 import dotenv from "dotenv";
+import multer from "multer";
+import fs from 'fs';
+import cloudinary from "cloudinary";
 import cookieParser from "cookie-parser";
 
 import userDetailsRoutes from "./routes/userDetailsRoutes.js";
 import postRoutes from "./routes/postRoutes.js";
 import authRoutes from "./routes/authRoutes.js";
+// import imageRoutes from './routes/imageRoutes.js';
+import commentRoutes from "./routes/commentRoutes.js";
+// import { uploadImage } from "./controllers/imageController.js";
 
 dotenv.config();
 const app = express();
@@ -35,6 +41,55 @@ app.get("/", (req, res) => {
 app.use("/auth", authRoutes);
 app.use("/user", userDetailsRoutes);
 app.use("/post", postRoutes);
+// app.use("/upload", imageRoutes);
+app.use("/comment", commentRoutes);
+
+const storage = multer.diskStorage({
+  destination: function (req, file, cb) {
+    cb(null, "files/");
+  },
+  filename: function (req, file, cb) {
+    console.log(file);
+    cb(null, file.originalname);
+  },
+});
+
+// POST ROUTE
+app.post("/upload", (req, res, next) => {
+  const upload = multer({ storage }).single("image");
+  upload(req, res, function (err) {
+    if (err) {
+      return res.send(err);
+    }
+
+    console.log("file uploaded to server");
+    console.log(req.file);
+
+    // SEND FILE TO CLOUDINARY
+    cloudinary.config({
+      cloud_name: process.env.CLOUD_NAME,
+      api_key: process.env.API_KEY,
+      api_secret: process.env.API_SECRET,
+    });
+
+    const path = req.file.path;
+    const uniqueFilename = new Date().toISOString();
+
+      console.log("No error, it should work");
+      cloudinary.uploader.upload(
+        path,
+        { public_id: `blog/${uniqueFilename}`, tags: `blog` }, // directory and tags are optional
+        function (err, image) {
+          if (err) return res.send(err);
+          console.log("file uploaded to Cloudinary");
+  
+          fs.unlinkSync(path);
+  
+          res.json(image);
+        }
+      );
+  });
+});
 
 // PORT
 const PORT = process.env.PORT || 5000;
