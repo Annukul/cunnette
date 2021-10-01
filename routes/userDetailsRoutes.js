@@ -15,7 +15,7 @@ import {
 const router = express.Router();
 
 router.post("/addUserDetails", addUserDetails);
-router.get("/getUserDetail/:id", getUserDetail);
+router.get("/getUserDetails/:id", getUserDetail);
 router.put("/updateUserDetail/:id", updateUserDetail);
 // User Achievements Routes
 router.post("/addUserAchievements", addUserAchievements);
