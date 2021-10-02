@@ -23,6 +23,9 @@ const userDetailsSchema = new mongoose.Schema(
           },
         },
       },
+      image_url: {
+        type: String
+      },
       about: {
         type: String,
       },

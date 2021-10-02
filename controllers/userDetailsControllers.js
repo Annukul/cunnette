@@ -1,3 +1,10 @@
+import express from 'express';
+import multer from "multer";
+import dotenv from "dotenv";
+import fs from "fs";
+import cloudinary from "cloudinary";
+const app = express();
+
 import userDetails from "../models/userDetailsModel.js";
 import userAchievements from "../models/userAchievementsModel.js";
 
@@ -201,5 +208,60 @@ export const deleteUserAchievement = async (req, res) => {
     console.log(
       "/user/deleteUserAchievement/:id/:achievement/:index => " + error.message
     );
+  }
+};
+
+
+// Upload profile pic
+export const profileUpload = async (req, res) => {
+  try {
+    const storage = multer.diskStorage({
+      destination: function (req, file, cb) {
+        cb(null, "../files/");
+      },
+      filename: function (req, file, cb) {
+        console.log(file);
+        cb(null, file.originalname);
+      },
+    });
+
+    // POST ROUTE
+    app.post("/upload", (req, res, next) => {
+      const upload = multer({ storage }).single("image");
+      upload(req, res, function (err) {
+        if (err) {
+          return res.send(err);
+        }
+
+        console.log("file uploaded to server");
+        console.log(req.file);
+
+        // SEND FILE TO CLOUDINARY
+        cloudinary.config({
+          cloud_name: process.env.CLOUD_NAME,
+          api_key: process.env.API_KEY,
+          api_secret: process.env.API_SECRET,
+        });
+
+        const path = req.file.path;
+        const uniqueFilename = new Date().toISOString();
+
+        console.log("No error, it should work");
+        cloudinary.uploader.upload(
+          path,
+          { public_id: `profiles/${uniqueFilename}`, tags: `profiles` }, // directory and tags are optional
+          function (err, image) {
+            if (err) return res.send(err);
+            console.log("file uploaded to Cloudinary");
+
+            fs.unlinkSync(path);
+
+            res.json(image);
+          }
+        );
+      });
+    });
+  } catch (error) {
+    res.status(500).json(error.message);
   }
 };

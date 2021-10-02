@@ -3,6 +3,7 @@ import Comment from '../models/commentModel.js';
 export const addComment = async (req, res) => {
     try {
         const newComment = new Comment({
+            user_id: req.body.user_id,
             post_id: req.body.post_id,
             comment: req.body.comment,
             name: req.body.name

@@ -10,6 +10,7 @@ import {
   getUserSingleAchievement,
   updateUserAchievement,
   deleteUserAchievement,
+  profileUpload,
 } from "../controllers/userDetailsControllers.js";
 import isAuthenticatedUser from "../middlewares/auth.js";
 
@@ -43,5 +44,8 @@ router.delete(
   isAuthenticatedUser,
   deleteUserAchievement
 );
+
+// Upload profile pic
+router.post("/upload", profileUpload);
 
 export default router;
