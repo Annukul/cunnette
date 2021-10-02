@@ -1,42 +1,43 @@
-import mongoose from 'mongoose';
+import mongoose from "mongoose";
 
-const postSchema = new mongoose.Schema({
+const postSchema = new mongoose.Schema(
+  {
     user_id: {
-        type: String
+      type: String,
     },
     image_id: {
-        type: String
+      type: String,
     },
     title: {
-        type: String
+      type: String,
     },
     excrept: {
-        type: String
-    },
-    category: {
-        type: Array
+      type: String,
     },
     flair: {
-        type: Array
+      type: Array,
     },
     description: {
-        type: String
+      type: String,
     },
     imageUrl: {
-        type: String
+      type: String,
     },
-    vote: {
-        upvote: {
-            type: String
-        },
-        downvote: {
-            type: String
-        }
+    upvote: {
+      type: Number,
+      default: 0,
+    },
+    downvote: {
+      type: Number,
+      default: 0,
     },
     commentsCount: {
-        type: String
-    }
-}, { timestamps: true });
+      type: Number,
+      default: 0,
+    },
+  },
+  { timestamps: true }
+);
 
 const Post = mongoose.model("posts", postSchema);
 export default Post;

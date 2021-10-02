@@ -12,6 +12,7 @@ import postRoutes from "./routes/postRoutes.js";
 import authRoutes from "./routes/authRoutes.js";
 // import imageRoutes from './routes/imageRoutes.js';
 import commentRoutes from "./routes/commentRoutes.js";
+import getUserRoutes from './routes/getUserRoutes.js';
 // import { uploadImage } from "./controllers/imageController.js";
 
 dotenv.config();
@@ -43,6 +44,7 @@ app.use("/user", userDetailsRoutes);
 app.use("/post", postRoutes);
 // app.use("/upload", imageRoutes);
 app.use("/comment", commentRoutes);
+app.use("/getuser", getUserRoutes);
 
 const storage = multer.diskStorage({
   destination: function (req, file, cb) {
@@ -83,7 +85,10 @@ app.post("/upload", (req, res, next) => {
           if (err) return res.send(err);
           console.log("file uploaded to Cloudinary");
   
-          fs.unlinkSync(path);
+          fs.unlink(path, (err) => {
+            if (err) throw err;
+            console.lo
+          });
   
           res.json(image);
         }
