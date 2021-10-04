@@ -1,61 +1,45 @@
-import Comment from '../models/commentModel.js';
+import Comment from "../models/commentModel.js";
+import ErrorHandler from "../utils/errorHandler.js";
+import catchAsyncErrors from "../middlewares/catchAsyncErrors.js";
 
-export const addComment = async (req, res) => {
-    try {
-        const newComment = new Comment({
-            user_id: req.body.user_id,
-            post_id: req.body.post_id,
-            comment: req.body.comment,
-            name: req.body.name
-        });
+// Add Comment comment/new/add
+export const addComment = catchAsyncErrors(async (req, res) => {
+  const newComment = new Comment({
+    user_id: req.body.user_id,
+    post_id: req.body.post_id,
+    comment: req.body.comment,
+    name: req.body.name,
+  });
+  const comment = await newComment.save();
+  res.status(200).json({ success: true, comment });
+});
 
-        const comment = await newComment.save();
+// Edit Single Comment comment/edit/:id
+export const editComment = catchAsyncErrors(async (req, res) => {
+  const comment = await Comment.findById(req.params.id);
+  if (!comment) {
+    return next(new ErrorHandler("Comment Not Found", 404));
+  }
+  const editedComment = await Comment.findByIdAndUpdate(
+    req.params.id,
+    {
+      $set: req.body,
+    },
+    { new: true }
+  );
 
-        res.status(200).json(comment);
-    } catch (error) {
-        res.status(500).json(error);
-    }
-}
+  res.status(200).json({ success: true, editedComment });
+});
 
-export const editComment = async (req, res) => {
-    try {
-        const comment = await Comment.findById(req.params.id);
+// Delete Single Comment comment/delete/:id
+export const deleteComment = catchAsyncErrors(async (req, res) => {
+  const comment = await Comment.findById(req.params.id);
+  await comment.delete();
+  res.status(200).json({ success: true, message: "Comment deleted" });
+});
 
-        try {
-            const editedComment = await Comment.findByIdAndUpdate(req.params.id, {
-                $set: req.body,
-            }, { new: true });
-
-            res.status(200).json(editedComment);
-        } catch (error) {
-            res.status(500).json(error);
-        }
-    } catch (error) {
-        res.status(500).json(error);
-    }
-};
-
-export const deleteComment = async (req, res) => {
-    try {
-        const comment = await Comment.findById(req.params.id);
-
-        try {
-            await comment.delete();
-            res.status(200).json("Comment deleted");
-        } catch (error) {
-            res.status(500).json(error);
-        }
-    } catch (error) {
-        res.status(500).json(error);
-    }
-};
-
-export const getComments = async (req, res) => {
-    try {
-        const comment = await Comment.find({ "post_id": `${req.params.id}` });
-
-        res.status(200).json(comment);
-    } catch (error) {
-        res.status(500).json(error);
-    }
-};
+// Get Single Comment comment/single/:id
+export const getComments = catchAsyncErrors(async (req, res) => {
+  const comment = await Comment.find({ post_id: `${req.params.id}` });
+  res.status(200).json({ success: true, comment });
+});

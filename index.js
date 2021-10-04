@@ -1,18 +1,19 @@
 import express from "express";
 import cors from "cors";
-import mongoose from "mongoose";
 import dotenv from "dotenv";
 import multer from "multer";
 import fs from 'fs';
 import cloudinary from "cloudinary";
 import cookieParser from "cookie-parser";
 
+import connectDatabase from "./config/database.js";
 import userDetailsRoutes from "./routes/userDetailsRoutes.js";
 import postRoutes from "./routes/postRoutes.js";
 import authRoutes from "./routes/authRoutes.js";
 // import imageRoutes from './routes/imageRoutes.js';
 import commentRoutes from "./routes/commentRoutes.js";
 import getUserRoutes from './routes/getUserRoutes.js';
+import errorMiddleware from "./middlewares/errors.js"
 // import { uploadImage } from "./controllers/imageController.js";
 
 dotenv.config();
@@ -21,14 +22,15 @@ app.use(express.json());
 app.use(cors({ origin: true }));
 app.use(cookieParser());
 
-// DATABASE
-mongoose
-  .connect(process.env.MONGO_URI, {
-    useNewUrlParser: true,
-    useUnifiedTopology: true,
-  })
-  .then(() => console.log("Connected to database"))
-  .catch((err) => console.log(err));
+// Handle Uncaught Exceptions
+process.on('uncaughtException', err => {
+  console.log(`Error: ${err.message}`);
+  console.log(`Shutting down due to uncaught exception`);
+  process.exit(1);
+})
+
+// CONNECT TO DATABASE
+connectDatabase();
 
 // ROUTES
 app.get("/", (req, res) => {
@@ -37,8 +39,7 @@ app.get("/", (req, res) => {
   } catch (error) {
     res.status(500).json(error.message);
   }
-});
-
+})
 app.use("/auth", authRoutes);
 app.use("/user", userDetailsRoutes);
 app.use("/post", postRoutes);
@@ -96,13 +97,18 @@ app.post("/upload", (req, res, next) => {
   });
 });
 
+// Middleware to handle error
+app.use(errorMiddleware)
+
 // PORT
-const PORT = process.env.PORT || 5000;
+const PORT = process.env.PORT || 5001;
 const server = app.listen(PORT, () =>
-  console.log(`Server running on port ${PORT}`)
+  console.log(`Server running on port ${PORT} in ${process.env.NODE_ENV} mode.`)
 );
 
-process.on("unhandledRejection", (err, promise) => {
-  console.log(`Logged error: ${err}`);
+// Handle Unhandled Promise rejcetion
+process.on("unhandledRejection", (err) => {
+  console.log(`Error: ${err}`);
+  console.log('Shutting down the server due to Unhandled Promise rejection');
   server.close(() => process.exit(1));
 });

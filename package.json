@@ -5,7 +5,9 @@
   "main": "index.js",
   "type": "module",
   "scripts": {
-    "start": "nodemon index.js"
+    "start": "nodemon index.js",
+    "dev": "SET NODE_ENV=DEVELOPMENT& nodemon index.js",
+    "prod": "SET NODE_ENV=PRODUCTION& nodemon index.js"
   },
   "author": "",
   "license": "ISC",
@@ -21,6 +23,7 @@
     "multer": "^1.4.3",
     "nodemailer": "^6.6.3",
     "nodemon": "^2.0.12",
-    "path": "^0.12.7"
+    "path": "^0.12.7",
+    "validator": "^13.6.0"
   }
 }

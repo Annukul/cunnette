@@ -15,10 +15,12 @@ const commentsSchema = new mongoose.Schema({
     },
     vote: {
         upvote: {
-            type: String
+            type: String,
+            default: 0
         },
         downvote: {
-            type: String
+            type: String,
+            default: 0
         }
     }
 }, { timestamps: true });
