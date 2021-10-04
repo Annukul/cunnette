@@ -1,129 +1,91 @@
 import Post from "../models/postModel.js";
 import mongoose from "mongoose";
+import ErrorHandler from "../utils/errorHandler.js";
+import catchAsyncErrors from "../middlewares/catchAsyncErrors.js";
 
-// post: /post/new
-export const newPost = async (req, res) => {
-  try {
-    const newPost = new Post({
-      title: req.body.title,
-      excrept: req.body.excrept,
-      category: req.body.category,
-      flair: req.body.flair,
-      description: req.body.description,
-      image: req.body.image,
-      vote: req.body.vote,
-      commentsCount: req.body.commentsCount,
-    });
+// Add Post: /post/new
+export const newPost = catchAsyncErrors(async (req, res, next) => {
+  const post = await Post.create(req.body);
+  res.status(200).json({ success: true, post });
+});
 
-    const post = await newPost.save();
-    res.status(200).json(post);
-  } catch (error) {
-    res.status(500).json(error.message);
+// Delete Post: /post/delete/:id
+export const deletePost = catchAsyncErrors(async (req, res, next) => {
+  const post = await Post.findById(req.params.id);
+  if (!post) {
+    return next(new ErrorHandler("Post Not Found", 404));
   }
-};
+  await post.delete();
+  res.status(200).json({ succes: true, message: "Post deleted" });
+});
 
-// delete: /post/:id
-export const deletePost = async (req, res) => {
-  try {
-    const post = await Post.findById(req.params.id);
-
-    try {
-      await post.delete();
-      res.status(200).json("Post deleted");
-    } catch (error) {
-      res.status(500).json(error);
-    }
-  } catch (error) {
-    res.status(500).json(error);
+// Patch Post: /post/update/:id
+export const updatePost = catchAsyncErrors(async (req, res, next) => {
+  console.log(req.params.id);
+  const post = await Post.findById(req.params.id);
+  if (!post) {
+    return next(new ErrorHandler("Post Not Found", 404));
   }
-};
+  const updatedPost = await Post.findByIdAndUpdate(
+    req.params.id,
+    {
+      $set: req.body,
+    },
+    { new: true }
+  );
 
-// patch: /post/:id
-export const updatePost = async (req, res) => {
-  try {
-    const post = await Post.findById(req.params.id);
+  res.status(200).json({ success: true, updatedPost });
+});
 
-    try {
-      const updatedPost = await Post.findByIdAndUpdate(
-        req.params.id,
-        {
-          $set: req.body,
-        },
-        { new: true }
-      );
-
-      res.status(200).json(updatedPost);
-    } catch (error) {
-      res.status(500).json(error);
-    }
-  } catch (error) {
-    res.status(500).json(error);
+// Get Single Post: /post/single/:id
+export const getSinglePost = catchAsyncErrors(async (req, res, next) => {
+  const post = await Post.findById(req.params.id);
+  if (!post) {
+    return next(new ErrorHandler("Post Not Found", 404));
   }
-};
 
-// Get: /post/:id
-export const getSinglePost = async (req, res) => {
-  try {
-    const post = await Post.findById(req.params.id);
+  res.status(200).json({ success: true, post });
+});
 
-    res.status(200).json(post);
-  } catch (error) {
-    res.status(500).json(error);
+// Get /post/all/posts
+export const getAllPosts = catchAsyncErrors(async (req, res, next) => {
+  const posts = await Post.find();
+  res.status(200).json({ success: true, posts });
+});
+
+// Get posts by flair /post/byflair/:flair
+export const filterPost = catchAsyncErrors(async (req, res, next) => {
+  const post = await Post.find({ flair: req.params.flair });
+  if (post.length == 0) {
+    return next(new ErrorHandler("Post Not Found", 404));
   }
-};
+  res.status(200).json({ success: true, post });
+});
 
-// Get /post
-export const getAllPosts = async (req, res) => {
-  try {
-    const posts = await Post.find();
-
-    res.status(200).json(posts);
-  } catch (error) {
-    res.status(500).json(error);
+// upvote patch: /post/:id/upvote
+export const upvote = catchAsyncErrors(async (req, res, next) => {
+  const  id  = req.params.id;
+  if (!mongoose.Types.ObjectId.isValid(id)) {
+    return next(new ErrorHandler(`No post with id: ${id}`, 404));
   }
-};
 
-// Get posts by flair
-export const filterPost = async (req, res) => {
-    try {
-      const post = await Post.find({flair: [req.params.cat]});
+  const post = await Post.findById(id);
 
-      if (!post) return res.status(404).json("Post not found");
+  const updatedPost = await Post.findByIdAndUpdate(
+    id,
+    { upvote: post.upvote + 1 },
+    { new: true }
+  );
 
-      res.status(200).json(post);
-    } catch (error) {
-        res.status(500).json(error.message);
-    }
-}
+  res.status(200).json({ success: true, updatedPost });
+});
 
-// patch: /post/:id/upvote
-export const upvote = async (req, res) => {
-  const { id } = req.params;
-
-  try {
-    if (!mongoose.Types.ObjectId.isValid(id))
-      return res.status(404).send(`No post with id: ${id}`);
-
-    const post = await Post.findById(id);
-
-    const updatedPost = await Post.findByIdAndUpdate(
-      id,
-      { upvote: post.upvote + 1 },
-      { new: true }
-    );
-
-    res.status(200).json(updatedPost);
-  } catch (error) {
-    res.status(500).json(error.message);
-  }
-};
-
-// patch: /post/:id/downvote
-export const downvote = async (req, res) => {
-  const { id } = req.params;
+// downvote patch: /post/:id/downvote
+export const downvote = catchAsyncErrors(async (req, res, next) => {
+  const  id  = req.params.id;
 
   if (!mongoose.Types.ObjectId.isValid(id))
-    return res.status(404).send(`No post with id: ${id}`);
+    return next(new ErrorHandler(`No post with id: ${id}`, 404));
 
   const post = await Post.findById(id);
 
@@ -133,5 +95,5 @@ export const downvote = async (req, res) => {
     { new: true }
   );
 
-  res.status(200).json(updatedPost);
-};
+  res.status(200).json({ success: true, updatedPost });
+});

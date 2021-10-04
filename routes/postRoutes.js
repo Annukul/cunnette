@@ -5,12 +5,12 @@ import { deletePost, newPost, updatePost, getSinglePost, getAllPosts, upvote, do
 const router = express.Router();
 
 router.post("/new", newPost);
-router.patch("/:id", updatePost);
-router.delete("/:id", deletePost);
-router.get("/:id", getSinglePost);
-router.get("/", getAllPosts);
+router.patch("/update/:id", updatePost);
+router.delete("/delete/:id", deletePost);
+router.get("/single/:id", getSinglePost);
+router.get("/all/posts", getAllPosts);
 router.patch('/:id/upvote', upvote);
 router.patch('/:id/downvote', downvote);
-router.get("/:cat", filterPost);
+router.get("/byflair/:flair", filterPost);
 
 export default router;

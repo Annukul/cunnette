@@ -4,21 +4,24 @@ const postSchema = new mongoose.Schema(
   {
     user_id: {
       type: String,
+      required: [true, "user_id is missing"]
     },
     image_id: {
       type: String,
     },
     title: {
       type: String,
+      required: [true, "Post heading is missing"]
     },
     excrept: {
       type: String,
     },
     flair: {
-      type: Array,
+        type: Array,
     },
     description: {
       type: String,
+      required: [true, "Post description is missing"]
     },
     imageUrl: {
       type: String,
