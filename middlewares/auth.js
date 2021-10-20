@@ -3,6 +3,7 @@ import User from "../models/userModel.js";
 
 const isAuthenticatedUser = async (req, res, next) => {
   const { token } = req.cookies;
+  console.log(token);
   if (!token) {
     return res
       .status(401)
