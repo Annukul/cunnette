@@ -49,7 +49,7 @@ app.use("/getuser", getUserRoutes);
 
 const storage = multer.diskStorage({
   destination: function (req, file, cb) {
-    cb(null, "files/");
+    cb(null, "files");
   },
   filename: function (req, file, cb) {
     console.log(file);
@@ -88,7 +88,6 @@ app.post("/upload", (req, res, next) => {
 
         fs.unlink(path, (err) => {
           if (err) throw err;
-          console.lo;
         });
 
         res.json(image);
