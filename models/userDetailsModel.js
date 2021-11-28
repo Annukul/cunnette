@@ -3,7 +3,7 @@ import mongoose from "mongoose";
 const userDetailsSchema = new mongoose.Schema(
   [
     {
-      _userId: { type: String, immutable: true },
+      user_id: { type: String },
       collegeDetail: {
         collegeName: {
           type: String,
@@ -16,15 +16,15 @@ const userDetailsSchema = new mongoose.Schema(
         },
         courseDuration: {
           from: {
-            type: String,
+            type: Date,
           },
           to: {
-            type: String,
+            type: Date,
           },
         },
       },
       image_url: {
-        type: String
+        type: String,
       },
       about: {
         type: String,
@@ -33,7 +33,7 @@ const userDetailsSchema = new mongoose.Schema(
         type: Array,
       },
       dob: {
-        type: String,
+        type: Date,
       },
       contacts: {
         professionalEmailId: {
@@ -59,7 +59,7 @@ const userDetailsSchema = new mongoose.Schema(
           type: String,
         },
       },
-    }
+    },
   ],
   { timestamps: true }
 );

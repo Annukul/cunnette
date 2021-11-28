@@ -62,9 +62,15 @@ export const filterPost = catchAsyncErrors(async (req, res, next) => {
   res.status(200).json({ success: true, post });
 });
 
+// Get post by user
+export const getUserPost = catchAsyncErrors(async (req, res, next) => {
+  const post = await Post.find({ user_id: req.params.id });
+  res.status(200).json({ success: true, post: post });
+});
+
 // upvote patch: /post/:id/upvote
 export const upvote = catchAsyncErrors(async (req, res, next) => {
-  const  id  = req.params.id;
+  const id = req.params.id;
   if (!mongoose.Types.ObjectId.isValid(id)) {
     return next(new ErrorHandler(`No post with id: ${id}`, 404));
   }
@@ -82,7 +88,7 @@ export const upvote = catchAsyncErrors(async (req, res, next) => {
 
 // downvote patch: /post/:id/downvote
 export const downvote = catchAsyncErrors(async (req, res, next) => {
-  const  id  = req.params.id;
+  const id = req.params.id;
 
   if (!mongoose.Types.ObjectId.isValid(id))
     return next(new ErrorHandler(`No post with id: ${id}`, 404));
